@@ -1,0 +1,399 @@
+/* Animation subtile pour les sections au scroll */
+section {
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+}
+
+/* Animation pour l'effet de carte qui sort vers l'utilisateur au survol */
+@keyframes popOut {
+  0% { transform: scale(1) translateZ(0); }
+  50% { transform: scale(1.05) translateZ(40px); }
+  100% { transform: scale(1.05) translateZ(40px); }
+}
+
+.grid-motion-item:hover {
+  animation: popOut 0.3s ease forwards;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import des polices Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=Pinyon+Script&family=Dancing+Script:wght@400;500;600;700&display=swap');
+
+/* Variables pour les animations */
+:root {
+  --scroll-progress: 0;
+}
+
+html {
+  scroll-behavior: smooth; /* Activer le scroll fluide natif */
+}
+
+body {
+  @apply text-primary;
+  margin: 0;
+  background-color: #0a0a0a;
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Classes utilitaires pour les polices */
+.font-heading {
+  font-family: 'Playfair Display', serif;
+}
+
+.font-body {
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* Police manuscrite élégante */
+.font-manuscript {
+  font-family: 'Dancing Script', cursive;
+  font-weight: 600;
+}
+
+/* Police calligraphique Pinyon Script */
+.font-imperial {
+  font-family: 'Pinyon Script', cursive;
+  font-weight: 400;
+}
+
+/* Style pour le halo bleué - renforcé */
+.blue-glow {
+  text-shadow: 0 0 10px rgba(79, 70, 229, 0.6),
+               0 0 20px rgba(79, 70, 229, 0.5),
+               0 0 30px rgba(79, 70, 229, 0.4),
+               0 0 40px rgba(79, 70, 229, 0.3),
+               0 0 50px rgba(79, 70, 229, 0.2);
+}
+
+/* Effet d'écriture manuscrite */
+.handwriting-text {
+  color: #ffffff;
+  font-weight: 600;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+/* Animation d'encre qui coule */
+@keyframes inkFlow {
+  0% { 
+    opacity: 0;
+    transform: scale(0.8) rotate(-2deg);
+    filter: blur(1px);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05) rotate(1deg);
+    filter: blur(0px);
+  }
+  100% { 
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: blur(0px);
+  }
+}
+
+/* Effet de plume qui écrit */
+.writing-effect {
+  animation: inkFlow 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Styles globaux pour les éléments typographiques */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+}
+
+p, span, a, button, input, textarea {
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* Force la police Playfair Display pour tous les éléments avec dégradé */
+.bg-clip-text {
+  font-family: 'Playfair Display', serif !important;
+}
+
+/* Classes spécifiques pour les dégradés de texte */
+.gradient-text {
+  font-family: 'Playfair Display', serif !important;
+  background: linear-gradient(90deg, #4F46E5, #F97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-purple-pink {
+  font-family: 'Playfair Display', serif !important;
+  background: linear-gradient(90deg, #a855f7, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-secondary to-accent font-heading;
+  font-family: 'Playfair Display', serif;
+}
+
+/* Boutons avec dégradé moderne */
+.btn-gradient {
+  @apply px-6 py-3 rounded-md font-medium text-white relative overflow-hidden;
+  background: linear-gradient(90deg, #4F46E5 0%, #F97316 100%);
+  background-size: 200% 100%;
+  background-position: 0 0;
+  transition: background-position 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+}
+
+.btn-gradient:hover {
+  background-position: 100% 0;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+}
+
+/* Text gradient for hero */
+.text-gradient-modern {
+  @apply bg-clip-text text-transparent font-heading;
+  background-image: linear-gradient(90deg, #4F46E5, #F97316);
+  font-family: 'Playfair Display', serif;
+}
+
+.calligraphic-text {
+  filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* Style pour l'effet plume */
+.quill-animation svg path {
+  transition: stroke-dashoffset 1s ease;
+}
+
+@keyframes quillDrop {
+  0% { transform: translateY(-10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Animation de rotation pour l'effet de bordure des services */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Style Grid Motion pour le portfolio */
+.grid-motion-container {
+  perspective: 1500px;
+  perspective-origin: center center;
+}
+
+.grid-motion-item {
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+}
+
+.grid-motion-item:hover {
+  z-index: 2;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Effet dégradé pour le fond de la section portfolio */
+.portfolio-gradient-bg {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+/* Animations pour le Hero */
+.hero-bg-gradient {
+  background: radial-gradient(circle at 30% 30%, rgba(79, 70, 229, 0.05) 0%, rgba(249, 115, 22, 0.05) 50%, transparent 80%);
+}
+
+@keyframes blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(20px, -20px) scale(1.1); }
+  50% { transform: translate(0, 20px) scale(1); }
+  75% { transform: translate(-20px, -20px) scale(0.9); }
+}
+
+.animate-blob {
+  animation: blob 20s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* L'image héro et ses éléments flottants */
+.hero-image-container {
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.hero-main-image {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+.hero-floating-element {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  z-index: 2;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Style pour le portfolio qui utilise l'effet Grid Motion */
+.portfolio-section {
+  perspective: 1000px;
+  background-color: #000;
+  position: relative;
+}
+
+.grid-cell {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.grid-cell:hover {
+  transform: translateZ(30px);
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+@media (min-width: 768px) {
+  .-rotate-\[15deg\] {
+    transform: rotate(-15deg) !important;
+  }
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hero-pattern {
+  background-color: #f8fafc;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%234F46E5' fill-opacity='0.1' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+/* Dégradé plus progressif pour le texte du héro */
+.gradient-text-hero {
+  font-family: 'Playfair Display', serif !important;
+  background: linear-gradient(90deg, #4F46E5 0%, #6366f1 30%, #a855f7 60%, #F97316 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Effet de dégradé pour les liens de la barre de navigation */
+.nav-link-gradient-hover {
+  position: relative;
+  background-clip: text;
+  transition: color 0.3s ease;
+}
+
+.nav-link-gradient-hover:hover {
+  color: transparent;
+  background-image: linear-gradient(90deg, #4F46E5, #F97316);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Effet d'ombre pour le texte dans la barre de navigation */
+.text-shadow-sm {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 1), 0 0 3px rgba(0, 0, 0, 0.7);
+}
+
+/* Styles pour la barre de navigation */
+.navbar-glass {
+  backdrop-filter: blur(12px);
+  background-color: rgba(15, 23, 42, 0.75); /* primary color with opacity */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar-link {
+  position: relative;
+}
+
+.navbar-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #4F46E5; /* secondary color */
+  transition: width 0.3s ease;
+}
+
+.navbar-link:hover::after {
+  width: 100%;
+}
+
+/* Styles pour la section de fond dégradée animée */
+.bg-gradient-animation {
+  --gradient-background-start: rgb(15, 23, 42);
+  --gradient-background-end: rgb(30, 41, 59);
+  --first-color: rgb(79, 70, 229);
+  --second-color: rgba(249, 115, 22, 0.8);
+  --third-color: rgba(55, 65, 81, 0.8);
+  --fourth-color: rgba(79, 70, 229, 0.8);
+  --fifth-color: rgba(249, 115, 22, 0.8);
+  --pointer-color: rgba(255, 255, 255, 0.8);
+  --size: 100%;
+  --blending-value: normal;
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-secondary text-white font-medium rounded-md hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50;
+  }
+  
+  .service-card {
+    @apply bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100;
+  }
+  
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold mb-6 font-serif;
+  }
+}
+
+/* Style pour les sections avec ancres (décalage pour la navbar) */
+section[id] {
+  scroll-margin-top: 160px; /* Décalage augmenté pour éviter que le contenu soit caché derrière la navbar */
+  scroll-snap-margin-top: 160px; /* Pour la compatibilité avec les anciens navigateurs */
+}
+
+/* Décalage spécifique pour la section Services */
+section#services {
+  scroll-margin-top: 200px; /* Décalage plus important pour voir les 4 cartes correctement */
+  scroll-snap-margin-top: 200px;
+}
+
+
+
+/* =========== AJOUT pour effet glass morphic sombre et subtil =========== */
+.glass-dark {
+  background: rgba(10, 10, 20, 0.34);      /* noir profond, translucide */
+  backdrop-filter: blur(12px) saturate(120%);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+/* ======================================================================= */

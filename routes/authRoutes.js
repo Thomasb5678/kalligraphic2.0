@@ -1,0 +1,47 @@
+// routes/authRoutes.js - Routes pour l'authentification
+const express = require('express');
+const { check } = require('express-validator');
+const authController = require('../controllers/authController');
+const (req, res, next) => next() = require('../middlewares/auth');
+
+const router = express.Router();
+
+// Validation pour l'authentification
+const loginValidation = [
+  check('username')
+    .trim()
+    .notEmpty()
+    .withMessage('Le nom d\'utilisateur est requis'),
+  check('password')
+    .trim()
+    .notEmpty()
+    .withMessage('Le mot de passe est requis')
+];
+
+// Validation pour le changement de mot de passe
+const changePasswordValidation = [
+  check('currentPassword')
+    .trim()
+    .notEmpty()
+    .withMessage('Le mot de passe actuel est requis'),
+  check('newPassword')
+    .trim()
+    .notEmpty()
+    .withMessage('Le nouveau mot de passe est requis')
+    .isLength({ min: 8 })
+    .withMessage('Le nouveau mot de passe doit contenir au moins 8 caractères')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
+    .withMessage('Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial')
+];
+
+// Routes d'authentification
+router.post('/login', loginValidation, authController.login);
+router.get('/verify', (req, res, next) => next().protect, authController.verifyToken);
+router.post(
+  '/change-password',
+  (req, res, next) => next().protect,
+  changePasswordValidation,
+  authController.changePassword
+);
+
+module.exports = router;

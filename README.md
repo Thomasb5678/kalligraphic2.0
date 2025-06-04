@@ -1,95 +1,78 @@
-# Kalligraphic - Site Web React
+# Kalligraphic - Gestion de Portfolio Sécurisée
 
-Ce projet est un site web React moderne pour l'agence de communication visuelle Kalligraphic. La landing page présente les services et le portfolio de l'agence avec des animations élégantes et un design responsive.
+## À propos
+Kalligraphic est une application de gestion de portfolio sécurisée, conçue pour permettre aux professionnels de présenter leurs projets en ligne.
 
 ## Fonctionnalités
-
-- Design moderne et responsive adapté à tous les appareils
-- Animations fluides à l'aide de Framer Motion et GSAP
-- Intégration de Tailwind CSS pour un styling flexible
-- Formulaire de contact interactif
-- Navigation fluide entre les sections
-- Optimisé pour le SEO
-
-## Technologies utilisées
-
-- React.js
-- Framer Motion (animations)
-- GSAP (animations avancées)
-- Tailwind CSS (framework CSS)
-- React Intersection Observer (animations au scroll)
-- Responsive Design
+- Affichage des projets sur une interface moderne
+- Gestion sécurisée des projets (ajout, modification, suppression)
+- Authentification des utilisateurs
+- API RESTful sécurisée
+- Sauvegarde automatique des données
 
 ## Installation
 
-Suivez ces instructions pour installer et lancer le projet sur votre machine locale.
-
 ### Prérequis
+- Node.js (v14.0.0 ou supérieur)
+- npm (v6.0.0 ou supérieur)
 
-- Node.js (version 14 ou supérieure)
-- npm ou yarn
+### Étapes d'installation
+1. Clonez ce dépôt
+2. Installez les dépendances : `npm install`
+3. Configurez les variables d'environnement dans le fichier `.env`
+4. Lancez l'application en mode développement : `npm run dev`
 
-### Installation
+## Utilisation
+- Mode développement : Exécutez `dev.bat` ou `npm run dev`
+- Mode production : Exécutez `demarrer.bat` ou `npm run prod:win`
 
-1. Ouvrez un terminal dans le dossier du projet et installez les dépendances :
-
-```bash
-npm install
-# ou
-yarn install
-```
-
-2. Lancez le serveur de développement :
-
-```bash
-npm start
-# ou
-yarn start
-```
-
-3. Ouvrez votre navigateur à l'adresse [http://localhost:3000](http://localhost:3000) pour voir le site.
+## Sécurité
+Cette application implémente plusieurs couches de sécurité :
+- Authentification JWT
+- Protection contre les attaques XSS
+- Limitation de débit (rate limiting)
+- Validation des données
+- Protection CORS
+- En-têtes de sécurité HTTP
+- Journalisation des événements
 
 ## Structure du projet
-
 ```
 kalligraphic/
-├── public/                # Fichiers publics
-│   ├── index.html         # Page HTML principale
-│   └── manifest.json      # Manifest pour PWA
-├── src/                   # Code source
-│   ├── assets/            # Images et ressources
-│   ├── components/        # Composants React
-│   │   ├── Header.js      # Navigation et en-tête
-│   │   ├── Hero.js        # Section d'accueil
-│   │   ├── Services.js    # Section des services
-│   │   ├── About.js       # Section à propos
-│   │   ├── Portfolio.js   # Section portfolio
-│   │   ├── Contact.js     # Formulaire de contact
-│   │   └── Footer.js      # Pied de page
-│   ├── styles/            # Fichiers CSS
-│   │   └── index.css      # Styles CSS principaux avec Tailwind
-│   ├── App.js             # Composant principal
-│   └── index.js           # Point d'entrée React
-├── package.json           # Dépendances et scripts
-└── tailwind.config.js     # Configuration de Tailwind CSS
+├── build/               # Fichiers de production compilés
+├── config/              # Fichiers de configuration
+├── controllers/         # Contrôleurs de l'API
+├── logs/                # Journaux d'application
+├── middlewares/         # Middlewares Express
+├── models/              # Modèles de données
+├── public/              # Fichiers statiques publics
+├── routes/              # Routes de l'API
+├── src/                 # Code source React
+│   ├── components/      # Composants React
+│   ├── data/            # Données de l'application
+│   │   └── backups/     # Sauvegardes automatiques
+│   ├── pages/           # Pages de l'application
+│   └── styles/          # Styles CSS/SCSS
+├── .env                 # Variables d'environnement
+├── package.json         # Dépendances et scripts
+├── server.js            # Serveur Express principal
+└── README.md            # Documentation
 ```
 
-## Personnalisation
+## API Documentation
+L'API fournit les endpoints suivants :
 
-Vous pouvez personnaliser facilement le site en modifiant les fichiers suivants :
+### Authentification
+- `POST /api/auth/login` - Connexion utilisateur
+- `GET /api/auth/verify` - Vérification du token JWT
+- `POST /api/auth/change-password` - Changement de mot de passe
 
-- `tailwind.config.js` - Pour les couleurs, polices et styles personnalisés
-- Composants dans le dossier `src/components/` - Pour modifier les sections
-- `src/styles/index.css` - Pour les styles CSS spécifiques
+### Projets
+- `GET /api/projects` - Récupération de tous les projets
+- `GET /api/projects/:id` - Récupération d'un projet par ID
+- `POST /api/projects` - Ajout d'un projet (authentification requise)
+- `PUT /api/projects/:id` - Modification d'un projet (authentification requise)
+- `DELETE /api/projects/:id` - Suppression d'un projet (authentification requise)
 
-## Déploiement
-
-Pour construire le projet pour la production :
-
-```bash
-npm run build
-# ou
-yarn build
-```
-
-Le résultat de la construction se trouvera dans le dossier `build/`, prêt à être déployé sur n'importe quel hébergement statique (Netlify, Vercel, GitHub Pages, etc.).
+## Licence
+Tous droits réservés.

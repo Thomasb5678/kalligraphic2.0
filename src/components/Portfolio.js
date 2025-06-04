@@ -4,10 +4,16 @@ import { useInView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
 import { GridMotion } from './ui/grid-motion';
 import AnimatedBackground from './ui/AnimatedBackground';
-import { images } from '../data/data';
+import usePortfolioData from '../hooks/usePortfolioData';
 import ImagePreview from './ImagePreview';
 
-const Portfolio = () => {
+const Portfolio = ({ syncedImages }) => {
+  // Utiliser le hook pour récupérer les données via API
+  const { data: apiData, loading, error } = usePortfolioData();
+  
+  // Priorité : syncedImages (props) > apiData (API) > fallback
+  const dataSource = syncedImages || apiData || { portfolioPreview: [] };
+  
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -43,15 +49,14 @@ const Portfolio = () => {
   // Catégories basées sur vos données + catégories par défaut
   const categories = [
     { id: 'all', name: 'Tous' },
-    { id: 'calligraphie', name: 'Calligraphie' },
-    { id: 'design', name: 'Design' },
-    { id: 'digital', name: 'Art Numérique' },
-    { id: 'traditionnel', name: 'Traditionnel' },
-    { id: 'moderne', name: 'Moderne' },
+    { id: 'identité visuelle', name: 'Identité visuelle' },
+    { id: 'webdesign', name: 'Webdesign' },
+    { id: 'communication digitale', name: 'Communication digitale' },
+    { id: 'présentation et supports', name: 'Présentation et supports' },
   ];
 
-  // Récupération des projets depuis vos données
-  const portfolioProjects = images.portfolioPreview || [];
+  // Récupération des projets depuis les données synchronisées
+  const portfolioProjects = dataSource.portfolioPreview || [];
 
   // Fonction pour filtrer les projets par catégorie
   const filteredProjects = activeCategory === 'all' 
@@ -90,44 +95,28 @@ const Portfolio = () => {
       const decorativeElements = [
         <div key='deco-1' className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-purple-500 to-blue-600 text-white rounded-lg">
           <div className="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center mb-4">
-            ✍️
+            💼
           </div>
-          <div className="text-lg font-medium">Calligraphie</div>
+          <div className="text-lg font-medium">Identité visuelle</div>
         </div>,
         <div key='deco-2' className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-blue-500 to-teal-600 text-white rounded-lg">
           <div className="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center mb-4">
-            🎨
+            💻
           </div>
-          <div className="text-lg font-medium">Design</div>
+          <div className="text-lg font-medium">Webdesign</div>
         </div>,
         <div key='deco-3' className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-green-500 to-blue-600 text-white rounded-lg">
           <div className="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center mb-4">
-            💻
+            📱
           </div>
-          <div className="text-lg font-medium">Art Numérique</div>
+          <div className="text-lg font-medium">Communication digitale</div>
         </div>,
         <div key='deco-4' className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-red-500 to-pink-600 text-white rounded-lg">
           <div className="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center mb-4">
-            📖
+            📊
           </div>
-          <div className="text-lg font-medium">Traditionnel</div>
-        </div>,
-        <div key='deco-5' className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-yellow-500 to-orange-600 text-white rounded-lg">
-          <div className="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center mb-4">
-            🚀
-          </div>
-          <div className="text-lg font-medium">Moderne</div>
-        </div>,
-        <div key='deco-admin' className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-lg">
-          <div className="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center mb-4">
-            ⚙️
-          </div>
-          <div className="text-lg font-medium">
-            <Link to="/admin" className="hover:underline">
-              Gérer Portfolio
-            </Link>
-          </div>
-        </div>,
+          <div className="text-lg font-medium">Présentation & supports</div>
+        </div>
       ];
 
       // Ajouter les éléments décoratifs pour compléter
@@ -141,6 +130,17 @@ const Portfolio = () => {
   };
 
   const portfolioItems = createPortfolioItems();
+
+  // Affichage du loading
+  if (loading && !syncedImages) {
+    return (
+      <section id="portfolio" className="relative overflow-hidden py-20 bg-gray-950">
+        <div className="container mx-auto px-4 md:px-6 text-center">
+          <div className="text-white text-lg">Chargement du portfolio...</div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="portfolio" className="relative overflow-hidden py-20 bg-gray-950">
@@ -186,16 +186,7 @@ const Portfolio = () => {
               ))}
             </motion.div>
 
-            {/* Indicateur du nombre de projets */}
-            <motion.div 
-              variants={itemVariants}
-              className="text-gray-400 text-sm mb-4"
-            >
-              {filteredProjects.length > 0 
-                ? `${filteredProjects.length} projet${filteredProjects.length > 1 ? 's' : ''} ${activeCategory !== 'all' ? `en ${categories.find(c => c.id === activeCategory)?.name.toLowerCase()}` : ''}`
-                : "Aucun projet dans cette catégorie"
-              }
-            </motion.div>
+            {/* Indicateur du nombre de projets - supprimé sur demande */}
           </motion.div>
         </div>
 
@@ -212,7 +203,7 @@ const Portfolio = () => {
           <motion.div variants={itemVariants} className="space-y-4">
             <Link 
               to="/portfolio" 
-              className="relative group overflow-hidden rounded-xl inline-flex items-center px-8 py-4 text-white font-medium transform hover:scale-105 mr-4"
+              className="relative group overflow-hidden rounded-xl inline-flex items-center px-8 py-4 text-white font-medium transform hover:scale-105"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-orange-500 opacity-100 group-hover:opacity-90 transition-opacity duration-300" />
               <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -224,27 +215,9 @@ const Portfolio = () => {
               </div>
             </Link>
 
-            <Link 
-              to="/admin" 
-              className="relative group overflow-hidden rounded-xl inline-flex items-center px-6 py-3 text-white font-medium transform hover:scale-105 ml-4"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-500 opacity-100 group-hover:opacity-90 transition-opacity duration-300" />
-              <div className="relative z-10 flex items-center justify-center space-x-2">
-                <span>⚙️ Gérer mon portfolio</span>
-              </div>
-            </Link>
+            {/* Bouton Gérer mon portfolio - supprimé sur demande */}
 
-            {/* Message informatif si pas de projets */}
-            {portfolioProjects.length === 0 && (
-              <motion.div 
-                variants={itemVariants}
-                className="mt-6 p-4 bg-blue-900 bg-opacity-30 border border-blue-500 rounded-lg text-blue-200 max-w-md mx-auto"
-              >
-                <p className="text-sm">
-                  💡 <strong>Astuce :</strong> Cliquez sur "Gérer mon portfolio" pour ajouter vos premiers projets via l'interface d'administration.
-                </p>
-              </motion.div>
-            )}
+            {/* Message informatif si pas de projets - supprimé sur demande */}
           </motion.div>
         </div>
       </AnimatedBackground>

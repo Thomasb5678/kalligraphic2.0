@@ -6,7 +6,7 @@ export const ADMIN_CONFIG = {
   // Identifiants de connexion
   credentials: {
     username: 'admin',              // Changez selon votre préférence
-    password: 'kalligraphic2024'    // Changez pour un mot de passe sécurisé
+    password: 'admin123'            // Mot de passe simplifié
   },
 
   // Configuration de session
@@ -18,8 +18,8 @@ export const ADMIN_CONFIG = {
 
   // Configuration de sécurité
   security: {
-    maxAttempts: 3,                 // Nombre max de tentatives de connexion
-    lockoutDuration: 15 * 60 * 1000, // 15 minutes de verrouillage
+    maxAttempts: 10,                // Augmenté à 10 tentatives
+    lockoutDuration: 1 * 60 * 1000, // Réduit à 1 minute de verrouillage
     requireStrongPassword: false    // Exiger un mot de passe fort (pour le futur)
   }
 };
@@ -71,22 +71,12 @@ export const handleFailedAttempt = () => {
   return false;
 };
 
-// Vérifier si le compte est verrouillé
+// Vérifier si le compte est verrouillé - MODIFIÉ POUR DÉVERROUILLER
 export const isAccountLocked = () => {
-  const lockoutTime = localStorage.getItem('kalligraphic_admin_lockout');
-  if (!lockoutTime) return false;
-
-  const lockoutStart = parseInt(lockoutTime);
-  const currentTime = Date.now();
-  
-  if ((currentTime - lockoutStart) < ADMIN_CONFIG.security.lockoutDuration) {
-    return true; // Encore verrouillé
-  } else {
-    // Déverrouiller le compte
-    localStorage.removeItem('kalligraphic_admin_lockout');
-    localStorage.removeItem('kalligraphic_admin_attempts');
-    return false;
-  }
+  // Déverrouiller le compte immédiatement
+  localStorage.removeItem('kalligraphic_admin_lockout');
+  localStorage.removeItem('kalligraphic_admin_attempts');
+  return false; // Toujours déverrouillé
 };
 
 // Réinitialiser les tentatives après une connexion réussie

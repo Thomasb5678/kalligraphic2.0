@@ -5,11 +5,13 @@ import { BackgroundGradientAnimation } from './ui/background-gradient-animation'
 import { StaggeredScrollGroup, StaggeredScrollItem } from './ui/SmoothScrollAnimation';
 import { AppleGlassParallax } from './ui/AppleParallax';
 import { BlurText } from './ui/animated-blur-text';
+import { images } from '../data/data';
 
-// Image de hero - votre image personnalisée locale
-const placeholderImage = "/images/hero-image.png";
-
+// Image de hero - version simplifiée revenant à l'image externe
 const Hero = () => {
+  // Utiliser l'image principale définie dans data.js
+  const placeholderImage = images.hero?.main || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe";
+
   useEffect(() => {
     // Animation pour les éléments hero
     const tl = gsap.timeline();

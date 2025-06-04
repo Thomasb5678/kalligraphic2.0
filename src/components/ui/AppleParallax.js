@@ -16,25 +16,27 @@ export const AppleParallax = ({
   });
   
   // Calculer les valeurs de transformation en fonction de la direction
-  const getTransformValues = () => {
+  const getTransformProps = () => {
     const range = 100 * depth; // Portée du mouvement en pixels
     
     switch (direction) {
       case 'up':
-        return useTransform(scrollYProgress, [0, 1], [range, -range]);
+        return { range: [range, -range] };
       case 'down':
-        return useTransform(scrollYProgress, [0, 1], [-range, range]);
+        return { range: [-range, range] };
       case 'left':
-        return useTransform(scrollYProgress, [0, 1], [range, -range]);
+        return { range: [range, -range] };
       case 'right':
-        return useTransform(scrollYProgress, [0, 1], [-range, range]);
+        return { range: [-range, range] };
       default:
-        return useTransform(scrollYProgress, [0, 1], [range, -range]);
+        return { range: [range, -range] };
     }
   };
   
+  const transformProps = getTransformProps();
+  
   // Valeurs de transformation basées sur la direction
-  const transformValue = getTransformValues();
+  const transformValue = useTransform(scrollYProgress, [0, 1], transformProps.range);
   
   return (
     <div ref={ref} className={`${className} relative`} style={{ overflow }}>
@@ -147,6 +149,7 @@ export const AppleGlassParallax = ({
   // Transformation basée sur le scroll
   const y = useTransform(scrollYProgress, [0, 1], [50 * depth, -50 * depth]);
   const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.95]);
+  const yGlass = useTransform(scrollYProgress, [0, 1], [-30 * depth, 30 * depth]);
   
   // Déterminez si nous devons afficher le fond ou non
   const showBackground = opacity > 0 && style.background !== 'transparent';
@@ -174,7 +177,7 @@ export const AppleGlassParallax = ({
             backgroundColor: `rgba(${color}, ${opacity})`,
             border: border,
             borderRadius: 'inherit',
-            y: useTransform(scrollYProgress, [0, 1], [-30 * depth, 30 * depth]),
+            y: yGlass,
             transition: "transform 0.1s cubic-bezier(0.22, 1, 0.36, 1)"
           }}
         />

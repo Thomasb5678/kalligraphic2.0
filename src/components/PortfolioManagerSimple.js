@@ -1,22 +1,23 @@
-// src/components/PortfolioManager.js
-// Composant amélioré pour la gestion des projets portfolio avec sauvegarde automatique
+// src/components/PortfolioManagerSimple.js
+// Version simplifiée du gestionnaire de portfolio pour une utilisation temporaire
 
 import React, { useState, useRef, useEffect } from 'react';
 import { images } from '../data/data';
+import * as apiClient from '../utils/api-client';
 
-const PortfolioManager = () => {
+const PortfolioManagerSimple = () => {
   const [newProject, setNewProject] = useState({
     title: '',
     category: 'calligraphie',
     description: '',
     image: '',
-    images: [], // Pour multiple images
     date: new Date().getFullYear().toString()
   });
 
   // États initialisés avec les données existantes
   const [projects, setProjects] = useState([]);
   const [projectsFull, setProjectsFull] = useState([]);
+  const [message, setMessage] = useState({ text: '', type: '' });
   
   // Charger les projets existants au démarrage
   useEffect(() => {
@@ -31,6 +32,7 @@ const PortfolioManager = () => {
   const [selectedImageName, setSelectedImageName] = useState('');
 
   const categories = [
+    'calligraphie',
     'identité visuelle', 
     'webdesign', 
     'communication digitale', 
@@ -63,22 +65,19 @@ const PortfolioManager = () => {
           ...prev,
           image: imagePath
         }));
-
-        // Optionnel : Prévisualisation de l'image
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          // Vous pouvez ici afficher une prévisualisation
-          console.log('Image sélectionnée:', file.name);
-        };
-        reader.readAsDataURL(file);
       } else {
-        alert('Veuillez sélectionner un fichier image (JPG, PNG, GIF, etc.)');
+        showMessage('Veuillez sélectionner un fichier image (JPG, PNG, GIF, etc.)', 'error');
         e.target.value = ''; // Reset input
       }
     }
   };
 
-  const handleAddProject = () => {
+  const showMessage = (text, type = 'info') => {
+    setMessage({ text, type });
+    setTimeout(() => setMessage({ text: '', type: '' }), 5000);
+  };
+
+  const handleAddProject = async () => {
     if (newProject.title && newProject.description && newProject.image) {
       const projectId = Date.now();
       
@@ -108,8 +107,29 @@ const PortfolioManager = () => {
       setProjects(updatedProjects);
       setProjectsFull(updatedProjectsFull);
       
-      // Sauvegarder automatiquement dans data.js
-      saveProjectsToFile(updatedProjects, updatedProjectsFull);
+      // Tenter d'utiliser l'API sécurisée si disponible
+      try {
+        const result = await apiClient.addProject({
+          title: newProject.title,
+          category: newProject.category,
+          image: newProject.image,
+          description: newProject.description,
+          date: newProject.date
+        });
+        
+        if (result.success) {
+          showMessage('Projet ajouté avec succès', 'success');
+        } else {
+          // Si l'API sécurisée échoue, utiliser la sauvegarde manuelle
+          const dataContent = await generateDataJsContent(updatedProjects, updatedProjectsFull);
+          await apiClient.saveData(dataContent);
+          // Dans ce cas, nous passons directement à la méthode de secours car nous nous attendons à ce que saveData échoue
+          copyCodeToClipboard(updatedProjects, updatedProjectsFull);
+        }
+      } catch (error) {
+        console.error('Erreur lors de l\'ajout du projet:', error);
+        copyCodeToClipboard(updatedProjects, updatedProjectsFull);
+      }
       
       // Réinitialiser le formulaire
       setNewProject({
@@ -117,18 +137,15 @@ const PortfolioManager = () => {
         category: 'calligraphie',
         description: '',
         image: '',
-        images: [],
         date: new Date().getFullYear().toString()
       });
       setSelectedImageName('');
-
-      console.log('Nouveau projet ajouté:', { previewProject, fullProject });
     } else {
-      alert('Veuillez remplir tous les champs obligatoires (titre, description, image)');
+      showMessage('Veuillez remplir tous les champs obligatoires (titre, description, image)', 'error');
     }
   };
 
-  const handleDeleteProject = (id) => {
+  const handleDeleteProject = async (id) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
       const updatedProjects = projects.filter(project => project.id !== id);
       const updatedProjectsFull = projectsFull.filter(project => project.id !== id);
@@ -136,18 +153,23 @@ const PortfolioManager = () => {
       setProjects(updatedProjects);
       setProjectsFull(updatedProjectsFull);
       
-      // Sauvegarder automatiquement dans data.js
-      saveProjectsToFile(updatedProjects, updatedProjectsFull);
-    }
-  };
-
-  const handleClearAllProjects = () => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer TOUS les projets ? Cette action est irréversible.')) {
-      setProjects([]);
-      setProjectsFull([]);
-      
-      // Sauvegarder automatiquement dans data.js
-      saveProjectsToFile([], []);
+      // Tenter d'utiliser l'API sécurisée si disponible
+      try {
+        const result = await apiClient.deleteProject(id);
+        
+        if (result.success) {
+          showMessage('Projet supprimé avec succès', 'success');
+        } else {
+          // Si l'API sécurisée échoue, utiliser la sauvegarde manuelle
+          const dataContent = await generateDataJsContent(updatedProjects, updatedProjectsFull);
+          await apiClient.saveData(dataContent);
+          // Dans ce cas, nous passons directement à la méthode de secours car nous nous attendons à ce que saveData échoue
+          copyCodeToClipboard(updatedProjects, updatedProjectsFull);
+        }
+      } catch (error) {
+        console.error('Erreur lors de la suppression du projet:', error);
+        copyCodeToClipboard(updatedProjects, updatedProjectsFull);
+      }
     }
   };
   
@@ -182,64 +204,105 @@ const PortfolioManager = () => {
     }`).join(',\n');
   };
   
-  // Fonction pour sauvegarder les projets dans data.js
-  const saveProjectsToFile = async (previewProjects, fullProjects) => {
-    try {
-      // Générer le code JS pour les projets
-      const dataContent = await generateDataJsContent(previewProjects, fullProjects);
-      
-      // Sauvegarder les données via l'API
-      const response = await fetch('http://localhost:3001/api/save-data', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ data: dataContent }),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Erreur lors de la sauvegarde des données');
-      }
-      
-      const result = await response.json();
-      console.log('Données sauvegardées avec succès:', result);
-      
-    } catch (error) {
-      console.error('Erreur lors de la sauvegarde:', error);
-      // En cas d'échec de l'API, on propose la méthode manuelle
-      const codeToDisplay = generateDataJsCode();
-      alert('La sauvegarde automatique a échoué. Veuillez copier le code et le mettre à jour manuellement.');
-      
-      // Copier le code dans le presse-papier
-      navigator.clipboard.writeText(codeToDisplay)
-        .then(() => {
-          alert('Le code a été copié dans votre presse-papier. Collez-le dans votre fichier src/data/data.js.');
-        })
-        .catch(() => {
-          console.log('CODE À COPIER:\n', codeToDisplay);
-          alert('Veuillez copier le code affiché dans la console (F12) et le mettre à jour manuellement dans src/data/data.js');
-        });
-    }
-  };
-  
-  // Générer le contenu JS pour data.js
+  // Fonction pour générer le contenu JS pour data.js
   const generateDataJsContent = async (previewProjects, fullProjects) => {
     try {
-      // Lire le fichier data.js actuel via l'API
-      const response = await fetch('http://localhost:3001/api/read-data');
+      // Tenter de lire le fichier data.js actuel via l'API
+      const currentData = await apiClient.readData();
       
-      if (!response.ok) {
-        throw new Error('Erreur lors de la lecture du fichier data.js');
-      }
-      
-      const currentData = await response.text();
+      // Si nous n'avons pas pu lire le fichier, utiliser un modèle par défaut
+      const dataTemplate = currentData || `// src/data/data.js - Données de l'application Kalligraphic
+
+export const images = {
+  // Portfolio Preview
+  portfolioPreview: [
+  ],
+
+  // Portfolio Full
+  portfolioFull: [
+  ],
+
+  // Blog posts
+  blog: [
+    {
+      id: 1,
+      title: 'Premier article de blog',
+      image: '/images/blog/default.jpg',
+      excerpt: 'Un exemple d\\'article pour votre blog de calligraphie',
+      date: '2025-05-25',
+      author: 'Administrateur',
+      content: 'Contenu de l\\'article...',
+      tags: ['exemple', 'blog']
+    }
+  ],
+
+  // Hero section images
+  hero: {
+    main: '/images/hero-image.png',
+    gallery: [
+      '/images/hero-image1.png',
+      '/images/hero-image2.png',
+      '/images/hero-image4.png',
+      '/images/hero-image5.png',
+      '/images/hero-image6.png'
+    ]
+  },
+
+  // About section images
+  about: {
+    profile: '/images/45.png',
+    background: '/images/about/background.jpg'
+  }
+};
+
+// Site content configuration
+export const siteContent = {
+  site: {
+    title: 'Kalligraphic',
+    description: 'Site de calligraphie et portfolio artistique',
+    author: 'Votre Nom',
+    email: 'contact@exemple.com',
+    phone: '+33 1 23 45 67 89',
+    address: 'Paris, France'
+  },
+  
+  hero: {
+    title: 'L\\'art de la calligraphie',
+    subtitle: 'Transformez vos idées en œuvres d\\'art',
+    description: 'Une approche moderne et élégante de la calligraphie traditionnelle'
+  },
+  
+  services: [
+    {
+      id: 1,
+      icon: '✍️',
+      title: 'Calligraphie',
+      description: 'Création de textes calligraphiés pour tous vos projets'
+    },
+    {
+      id: 2,
+      icon: '🎨',
+      title: 'Design',
+      description: 'Conception graphique et mise en page artistique'
+    },
+    {
+      id: 3,
+      icon: '📝',
+      title: 'Formation',
+      description: 'Cours et ateliers pour apprendre l\\'art de la calligraphie'
+    }
+  ]
+};
+
+// Default export for backwards compatibility
+export default images;`;
       
       // Générer le code pour portfolioPreview et portfolioFull
       const previewCode = generatePortfolioPreviewCode(previewProjects);
       const fullCode = generatePortfolioFullCode(fullProjects);
       
       // Remplacer les sections dans le fichier data.js
-      let updatedData = currentData;
+      let updatedData = dataTemplate;
       
       // Remplacer la section portfolioPreview
       const previewRegex = /portfolioPreview:\s*\[(.*?)\],/s;
@@ -252,26 +315,118 @@ const PortfolioManager = () => {
       return updatedData;
     } catch (error) {
       console.error('Erreur lors de la génération du contenu:', error);
-      throw error;
+      return generateDataJsCodeFallback(projects, projectsFull);
     }
   };
 
-  // Fonction pour générer le code à copier (en cas d'échec de la sauvegarde automatique)
-  const generateDataJsCode = () => {
-    const previewCode = generatePortfolioPreviewCode(projects);
-    const fullCode = generatePortfolioFullCode(projectsFull);
+  // Méthode de secours pour générer le code JS
+  const generateDataJsCodeFallback = (previewProjects, fullProjects) => {
+    const previewCode = generatePortfolioPreviewCode(previewProjects);
+    const fullCode = generatePortfolioFullCode(fullProjects);
 
-    return `// Code à copier dans votre fichier src/data/data.js :
+    return `// src/data/data.js - Données de l'application Kalligraphic
 
-// Remplacez la section 'portfolioPreview: [...]' par:
-portfolioPreview: [
+export const images = {
+  // Portfolio Preview
+  portfolioPreview: [
 ${previewCode}
-],
+  ],
 
-// Remplacez la section 'portfolioFull: [...]' par:
-portfolioFull: [
+  // Portfolio Full
+  portfolioFull: [
 ${fullCode}
-]`;
+  ],
+
+  // Blog posts
+  blog: [
+    {
+      id: 1,
+      title: 'Premier article de blog',
+      image: '/images/blog/default.jpg',
+      excerpt: 'Un exemple d\\'article pour votre blog de calligraphie',
+      date: '2025-05-25',
+      author: 'Administrateur',
+      content: 'Contenu de l\\'article...',
+      tags: ['exemple', 'blog']
+    }
+  ],
+
+  // Hero section images
+  hero: {
+    main: '/images/hero-image.png',
+    gallery: [
+      '/images/hero-image1.png',
+      '/images/hero-image2.png',
+      '/images/hero-image4.png',
+      '/images/hero-image5.png',
+      '/images/hero-image6.png'
+    ]
+  },
+
+  // About section images
+  about: {
+    profile: '/images/45.png',
+    background: '/images/about/background.jpg'
+  }
+};
+
+// Site content configuration
+export const siteContent = {
+  site: {
+    title: 'Kalligraphic',
+    description: 'Site de calligraphie et portfolio artistique',
+    author: 'Votre Nom',
+    email: 'contact@exemple.com',
+    phone: '+33 1 23 45 67 89',
+    address: 'Paris, France'
+  },
+  
+  hero: {
+    title: 'L\\'art de la calligraphie',
+    subtitle: 'Transformez vos idées en œuvres d\\'art',
+    description: 'Une approche moderne et élégante de la calligraphie traditionnelle'
+  },
+  
+  services: [
+    {
+      id: 1,
+      icon: '✍️',
+      title: 'Calligraphie',
+      description: 'Création de textes calligraphiés pour tous vos projets'
+    },
+    {
+      id: 2,
+      icon: '🎨',
+      title: 'Design',
+      description: 'Conception graphique et mise en page artistique'
+    },
+    {
+      id: 3,
+      icon: '📝',
+      title: 'Formation',
+      description: 'Cours et ateliers pour apprendre l\\'art de la calligraphie'
+    }
+  ]
+};
+
+// Default export for backwards compatibility
+export default images;`;
+  };
+
+  // Fonction pour copier le code dans le presse-papiers
+  const copyCodeToClipboard = async (previewProjects, fullProjects) => {
+    try {
+      const codeToDisplay = generateDataJsCodeFallback(previewProjects, fullProjects);
+      
+      // Copier le code dans le presse-papier
+      await navigator.clipboard.writeText(codeToDisplay);
+      showMessage('Le code a été copié dans votre presse-papier. Collez-le dans src/data/data.js', 'info');
+    } catch (error) {
+      console.error('Erreur lors de la copie dans le presse-papiers:', error);
+      showMessage('Erreur lors de la copie. Consultez la console pour le code (F12)', 'error');
+      console.log('CODE À COPIER:');
+      console.log(generateDataJsCodeFallback(previewProjects, fullProjects));
+    }
   };
 
   const copyImageInstructions = () => {
@@ -288,23 +443,25 @@ ${imageList || 'Aucune image pour le moment'}
 5. Taille recommandée : 800x600px minimum pour une bonne qualité`;
     
     navigator.clipboard.writeText(instructions);
-    alert('Instructions copiées dans le presse-papiers !');
+    showMessage('Instructions copiées dans le presse-papiers !', 'success');
   };
 
   return (
     <div className="max-w-6xl mx-auto p-6 bg-white min-h-screen">
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-3xl font-bold text-center text-gray-800">🎨 Gestionnaire de Portfolio Kalligraphic</h2>
-        
-        {/* Bouton de remise à zéro */}
-        <button
-          onClick={handleClearAllProjects}
-          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors shadow-lg"
-          title="Supprimer tous les projets"
-        >
-          🗑️ Tout effacer
-        </button>
       </div>
+      
+      {/* Message de notification */}
+      {message.text && (
+        <div className={`mb-4 p-4 rounded-lg ${
+          message.type === 'success' ? 'bg-green-100 text-green-800' : 
+          message.type === 'error' ? 'bg-red-100 text-red-800' : 
+          'bg-blue-100 text-blue-800'
+        }`}>
+          {message.text}
+        </div>
+      )}
       
       {/* Formulaire d'ajout de projet */}
       <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg mb-8 shadow-lg">
@@ -514,4 +671,4 @@ ${imageList || 'Aucune image pour le moment'}
   );
 };
 
-export default PortfolioManager;
+export default PortfolioManagerSimple;

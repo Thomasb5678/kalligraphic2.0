@@ -3,22 +3,27 @@ import { ParallaxScrollSecond } from "../components/ui/parallax-scroll";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Link } from 'react-router-dom';
-import { images } from '../data/data';
+import usePortfolioData from '../hooks/usePortfolioData';
+import PortfolioModal from '../components/PortfolioModal';
 
 const PortfolioPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Utiliser le hook pour récupérer les données via API
+  const { data: portfolioData, loading, error } = usePortfolioData();
 
-  // Récupération des projets complets depuis vos données
-  const portfolioProjects = images.portfolioFull || [];
+  // Récupération des projets complets depuis les données API
+  const portfolioProjects = portfolioData?.portfolioFull || [];
 
   // Catégories disponibles
   const categories = [
     { id: 'all', name: 'Tous les projets' },
-    { id: 'calligraphie', name: 'Calligraphie' },
-    { id: 'design', name: 'Design' },
-    { id: 'digital', name: 'Art Numérique' },
-    { id: 'traditionnel', name: 'Traditionnel' },
-    { id: 'moderne', name: 'Moderne' },
+    { id: 'identité visuelle', name: 'Identité visuelle' },
+    { id: 'webdesign', name: 'Webdesign' },
+    { id: 'communication digitale', name: 'Communication digitale' },
+    { id: 'présentation et supports', name: 'Présentation et supports' },
   ];
 
   // Filtrage des projets
@@ -84,6 +89,19 @@ const PortfolioPage = () => {
 
   const { images: portfolioImages, titles: portfolioTitles } = preparePortfolioData();
 
+  // Affichage du loading
+  if (loading) {
+    return (
+      <div className="bg-gray-950 min-h-screen">
+        <Navbar />
+        <div className="pt-36 pb-20 flex items-center justify-center">
+          <div className="text-white text-xl">Chargement du portfolio...</div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="bg-gray-950 min-h-screen">
       <Navbar />
@@ -114,15 +132,16 @@ const PortfolioPage = () => {
             ))}
           </div>
 
-          {/* Compteur de projets */}
+          {/* Compteur de projets - Masqué sur demande
           <div className="text-gray-400 text-sm mb-8">
             {filteredProjects.length > 0 
               ? `${filteredProjects.length} projet${filteredProjects.length > 1 ? 's' : ''} ${selectedCategory !== 'all' ? `en ${categories.find(c => c.id === selectedCategory)?.name.toLowerCase()}` : ''}`
               : "Aucun projet dans cette catégorie"
             }
           </div>
+          */}
 
-          {/* Bouton pour gérer le portfolio */}
+          {/* Bouton pour gérer le portfolio - Masqué sur demande
           <div className="mb-8">
             <Link 
               to="/admin" 
@@ -132,6 +151,7 @@ const PortfolioPage = () => {
               Gérer mon portfolio
             </Link>
           </div>
+          */}
         </div>
 
         {/* Affichage du portfolio */}
@@ -149,8 +169,9 @@ const PortfolioPage = () => {
                   {selectedCategory === 'all' ? 'Aucun projet encore' : `Aucun projet en ${categories.find(c => c.id === selectedCategory)?.name.toLowerCase()}`}
                 </h3>
                 <p className="text-gray-400 mb-6">
-                  Commencez par ajouter vos premiers projets via l'interface d'administration.
+                  {selectedCategory === 'all' ? 'Aucun projet à afficher pour le moment.' : `Aucun projet dans cette catégorie.`}
                 </p>
+                {/* Bouton masqué sur demande
                 <Link 
                   to="/admin" 
                   className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
@@ -158,72 +179,22 @@ const PortfolioPage = () => {
                   <span className="mr-2">➕</span>
                   Ajouter mon premier projet
                 </Link>
+                */}
               </div>
             </div>
           </div>
         )}
 
-        {/* Section détails des projets */}
-        {filteredProjects.length > 0 && (
-          <div className="container mx-auto px-4 md:px-6 mt-20">
-            <h2 className="text-3xl font-bold text-white text-center mb-12">
-              Détails des <span className="gradient-text">projets</span>
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredProjects.map((project) => (
-                <div key={project.id} className="bg-gray-900 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300">
-                  <div className="aspect-video bg-gray-800">
-                    <img 
-                      src={project.images?.[0] || project.image || '/images/placeholder.jpg'} 
-                      alt={project.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.src = '/images/placeholder.jpg';
-                      }}
-                    />
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-xl font-bold text-white">{project.title}</h3>
-                      <span className="px-2 py-1 bg-blue-500 text-white text-xs rounded-full">
-                        {project.category}
-                      </span>
-                    </div>
-                    <p className="text-gray-400 mb-4 text-sm">
-                      {project.description}
-                    </p>
-                    
-                    {project.techniques && project.techniques.length > 0 && (
-                      <div className="mb-4">
-                        <h4 className="text-sm font-semibold text-white mb-2">Techniques utilisées :</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {project.techniques.map((technique, index) => (
-                            <span key={index} className="px-2 py-1 bg-gray-800 text-gray-300 text-xs rounded">
-                              {technique}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className="text-xs text-gray-500">
-                      Année : {project.date}
-                    </div>
-                    
-                    {project.images && project.images.length > 1 && (
-                      <div className="mt-4 text-xs text-blue-400">
-                        +{project.images.length - 1} image{project.images.length > 2 ? 's' : ''} supplémentaire{project.images.length > 2 ? 's' : ''}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Section détails des projets - Supprimée sur demande */}
       </div>
       <Footer />
+      
+      {/* Modal du portfolio */}
+      <PortfolioModal 
+        project={selectedProject} 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 {
   "name": "kalligraphic",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@fontsource/dm-sans": "^5.2.5",
@@ -8,20 +8,41 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.4",
+    "express-validator": "^7.0.1",
     "framer-motion": "^10.18.0",
     "gsap": "^3.13.0",
+    "helmet": "^7.1.0",
+    "hpp": "^0.2.3",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.0.1",
     "react-intersection-observer": "^9.8.1",
     "react-router-dom": "^6.30.1",
     "react-scripts": "5.0.1",
+    "rotating-file-stream": "^3.1.1",
     "sass": "^1.70.0",
-    "web-vitals": "^3.5.2"
+    "web-vitals": "^3.5.2",
+    "xss-clean": "^0.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
+    "server": "node server.js",
+    "server:dev": "nodemon server.js",
+    "dev": "concurrently \"npm run start\" \"npm run server:dev\"",
     "build": "react-scripts build",
+    "build-no-lint": "set DISABLE_ESLINT_PLUGIN=true && react-scripts build",
+    "prod": "NODE_ENV=production npm run build && NODE_ENV=production node server.js",
+    "prod:win": "set NODE_ENV=production && npm run build && set NODE_ENV=production && node server.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -45,6 +66,8 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.17",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.1",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1"
   }

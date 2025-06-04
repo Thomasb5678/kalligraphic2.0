@@ -2,11 +2,39 @@
 export const images = {
   // Portfolio Preview
   portfolioPreview: [
-    // Aucun projet pour le moment
+    {
+      id: 1748286823765,
+      title: 'test',
+      category: 'identité visuelle',
+      image: '/images/portfolio/hero-image.png',
+      description: 'cec i est un test'
+    },
+    {
+      id: 1748328761674,
+      title: 'test',
+      category: 'calligraphie',
+      image: '/images/portfolio/Capture d’écran 2025-05-24 à 11.56.59.png',
+      description: 'retest'
+    }
   ],
   // Portfolio Full
   portfolioFull: [
-    // Aucun projet pour le moment
+    {
+      id: 1748286823765,
+      title: 'test',
+      category: 'identité visuelle',
+      images: ['/images/portfolio/hero-image.png'],
+      description: 'cec i est un test',
+      date: '2025'
+    },
+    {
+      id: 1748328761674,
+      title: 'test',
+      category: 'calligraphie',
+      images: ['/images/portfolio/Capture d’écran 2025-05-24 à 11.56.59.png'],
+      description: 'retest',
+      date: '2025'
+    }
   ],
   // Blog posts
   blog: [

@@ -28,7 +28,6 @@ const Navbar = () => {
   const menuItems = [
     { name: 'Services', href: '/#services' },
     { name: 'À propos', href: '/#about' },
-    { name: 'Blog', href: '/blog' },
     { name: 'Portfolio', href: '/portfolio' },
     { name: 'Contact', href: '/#contact' }
   ];

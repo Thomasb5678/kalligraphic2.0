@@ -2,7 +2,6 @@
 
 ## 🎉 **ÉTAT ACTUEL : SYNCHRONISATION RÉPARÉE !**
 
-✅ **Admin et site parfaitement synchronisés**  
 ✅ **Plus besoin de rebuild après modifications**  
 ✅ **Logo restauré et visible**  
 ✅ **Toutes les erreurs corrigées**  
@@ -24,31 +23,10 @@ node server.js
 
 **Puis ouvrez :**
 - 🌐 Site web : http://localhost:3001
-- 👤 Admin : http://localhost:3001/admin
 - 📡 API : http://localhost:3001/api/data
 
 ---
 
-## 🔄 **COMMENT FONCTIONNE LA SYNCHRONISATION**
-
-### **1. Ajouter un projet :**
-1. Allez sur http://localhost:3001/admin
-2. Remplissez le formulaire "Ajouter un nouveau projet"
-3. Cliquez "Ajouter le projet"
-4. **Le projet apparaît INSTANTANÉMENT sur le site !** ✨
-
-### **2. Modifier un projet :**
-1. Dans l'admin, cliquez "✏️ Modifier" sur un projet
-2. Modifiez les informations
-3. Cliquez "💾 Sauvegarder"
-4. **Les changements sont visibles immédiatement !** ✨
-
-### **3. Supprimer un projet :**
-1. Dans l'admin, cliquez "🗑️ Supprimer"
-2. Confirmez la suppression
-3. **Le projet disparaît instantanément du site !** ✨
-
----
 
 ## 📁 **STRUCTURE DU PROJET**
 
@@ -103,8 +81,6 @@ NETTOYAGE.bat
 ## 📈 **FONCTIONNALITÉS**
 
 ✅ **Portfolio dynamique** avec gestion d'images  
-✅ **Interface admin** sans mot de passe  
-✅ **Synchronisation temps réel** entre admin et site  
 ✅ **Sauvegarde automatique** des données  
 ✅ **API REST** pour les données  
 ✅ **Design responsive** et animations fluides  
@@ -117,7 +93,6 @@ NETTOYAGE.bat
 | Fonction | URL | Description |
 |----------|-----|-------------|
 | 🏠 **Site principal** | http://localhost:3001 | Site public avec portfolio |
-| ⚙️ **Administration** | http://localhost:3001/admin | Gérer les projets |
 | 📡 **API données** | http://localhost:3001/api/data | API REST (JSON) |
 | 💚 **Santé API** | http://localhost:3001/api/health | Vérifier que l'API fonctionne |
 

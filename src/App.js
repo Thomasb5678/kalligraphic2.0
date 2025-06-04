@@ -8,9 +8,7 @@ import Portfolio from './components/Portfolio';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
-import BlogPage from './pages/BlogPage';
 import PortfolioPage from './pages/PortfolioPage';
-import AdminPageNoAuth from './pages/AdminPageNoAuth';
 import ScrollToTop from './components/ScrollToTop';
 import AnimatedGallery from './components/AnimatedGallery';
 
@@ -139,9 +137,7 @@ function App() {
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/blog" element={<BlogPage />} />
           <Route path="/portfolio" element={<PortfolioPage />} />
-          <Route path="/admin" element={<AdminPageNoAuth />} />
         </Routes>
       </Router>
     </div>

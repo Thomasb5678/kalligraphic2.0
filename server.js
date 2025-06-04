@@ -123,19 +123,6 @@ ${formatPreviewProjects(portfolioPreview)}
   portfolioFull: [
 ${formatFullProjects(portfolioFull)}
   ],
-  // Blog posts
-  blog: [
-    {
-      id: 1,
-      title: 'Premier article de blog',
-      image: '/images/blog/default.jpg',
-      excerpt: 'Un exemple d\\'article pour votre blog de calligraphie',
-      date: '2025-05-25',
-      author: 'Administrateur',
-      content: 'Contenu de l\\'article...',
-      tags: ['exemple', 'blog']
-    }
-  ],
   // Hero section images - Utilisation d'URLs externes
   hero: {
     main: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe',
@@ -245,10 +232,6 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Route pour l'interface admin
-app.get('/admin', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
-});
 
 // Route de debug
 app.get('/debug', (req, res) => {
@@ -267,7 +250,6 @@ app.listen(PORT, () => {
   console.log('🎉 SERVEUR CORRIGÉ DÉMARRÉ !');
   console.log('============================');
   console.log(`📍 Site web    : http://localhost:${PORT}`);
-  console.log(`👤 Admin       : http://localhost:${PORT}/admin`);
   console.log(`📡 API Health  : http://localhost:${PORT}/api/health`);
   console.log(`📡 API Data    : http://localhost:${PORT}/api/data`);
   console.log(`🔍 Debug       : http://localhost:${PORT}/debug`);

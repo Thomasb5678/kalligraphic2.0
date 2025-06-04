@@ -141,17 +141,6 @@ const PortfolioPage = () => {
           </div>
           */}
 
-          {/* Bouton pour gérer le portfolio - Masqué sur demande
-          <div className="mb-8">
-            <Link 
-              to="/admin" 
-              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg hover:from-purple-700 hover:to-blue-600 transition-all duration-300 transform hover:scale-105"
-            >
-              <span className="mr-2">⚙️</span>
-              Gérer mon portfolio
-            </Link>
-          </div>
-          */}
         </div>
 
         {/* Affichage du portfolio */}
@@ -171,15 +160,6 @@ const PortfolioPage = () => {
                 <p className="text-gray-400 mb-6">
                   {selectedCategory === 'all' ? 'Aucun projet à afficher pour le moment.' : `Aucun projet dans cette catégorie.`}
                 </p>
-                {/* Bouton masqué sur demande
-                <Link 
-                  to="/admin" 
-                  className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
-                >
-                  <span className="mr-2">➕</span>
-                  Ajouter mon premier projet
-                </Link>
-                */}
               </div>
             </div>
           </div>

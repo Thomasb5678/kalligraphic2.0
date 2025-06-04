@@ -8,19 +8,6 @@ export const images = {
   portfolioFull: [
     // Aucun projet pour le moment
   ],
-  // Blog posts
-  blog: [
-    {
-      id: 1,
-      title: 'Premier article de blog',
-      image: '/images/blog/default.jpg',
-      excerpt: 'Un exemple d\'article pour votre blog de calligraphie',
-      date: '2025-05-25',
-      author: 'Administrateur',
-      content: 'Contenu de l\'article...',
-      tags: ['exemple', 'blog']
-    }
-  ],
   // Hero section images - Utilisation d'URLs externes
   hero: {
     main: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe',
